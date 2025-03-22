@@ -1,45 +1,43 @@
 import mongoose from "mongoose";
+import bcrypt from "bcrypt";
 
 const { Schema } = mongoose;
 
 const UserSchema = new Schema({
-    first_name:{
+    firstName: {
         type: String,
-        required: true ,
-        min: 6,
-        max: 10
+        minlength: 2, // Fixed typo
+        max: 50,
     },
-    last_name:{
+    lastName: {
         type: String,
-        required: true,
-        min: 6,
-        max: 10
+        minlength: 2,
+        max: 50,
     },
     email: {
         type: String,
-        required: true,
+        required: [true, 'Please enter an email'],
         unique: true,
-        lowercase: true,
-        trim: true,
-        match: [
-          /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-          "Please enter a valid email address",
-        ],
-      },
-      password: {
+        match: [/.+@.+\..+/, "Please enter a valid email address"],
+    },
+    password: {
         type: String,
-        required: true,
-        minlength: 8, // Minimum length of 8 characters
-        validate: {
-          validator: function (value) {
-            return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value);
-          },
-          message:
-            "Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character",
-        },
-      },
-      
-})
+        required: [true, 'Please enter a password'],
+        minlength: 6, // Fixed typo
+    },
+}, { timestamps: true }); // Added timestamps
+
+// Hash the password before saving
+UserSchema.pre("save", async function (next) {
+    if (!this.isModified("password")) return next();
+    try {
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+        next();
+    } catch (err) {
+        next(err);
+    }
+});
 
 const User = mongoose.model("User", UserSchema);
 export default User;

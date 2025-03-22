@@ -1,14 +1,18 @@
 import connectDB from "./db/connect.js";
 import express from "express";
 import { configDotenv } from "dotenv";
+import registrationRoutes from "./routes/authentication.js";
 
 configDotenv();
 
 const PORT = 4000;
 const connectionString= process.env.MONGO_URI
 const app = express();
-const HOST = "localhost";
+app.use(express.json());
 
+app.use("/auth", registrationRoutes);
+
+const HOST = "localhost";
 
 
 
