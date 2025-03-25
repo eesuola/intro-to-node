@@ -6,4 +6,5 @@ import { registration } from '../controller/authentication.js';
 
 routes.post("/register", registration);
 
+
 export default routes;

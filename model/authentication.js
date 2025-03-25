@@ -6,13 +6,14 @@ const { Schema } = mongoose;
 const UserSchema = new Schema({
     firstName: {
         type: String,
-        minlength: 2, // Fixed typo
-        max: 50,
+        required: [true, 'Please enter a first name'],
     },
     lastName: {
         type: String,
-        minlength: 2,
-        max: 50,
+    },
+    username: {
+        type: String,
+        required: [true, "Enter your username"],
     },
     email: {
         type: String,
@@ -23,21 +24,19 @@ const UserSchema = new Schema({
     password: {
         type: String,
         required: [true, 'Please enter a password'],
-        minlength: 6, // Fixed typo
+        minlength: 6, 
     },
-}, { timestamps: true }); // Added timestamps
-
-// Hash the password before saving
-UserSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) return next();
-    try {
-        const salt = await bcrypt.genSalt(10);
-        this.password = await bcrypt.hash(this.password, salt);
-        next();
-    } catch (err) {
-        next(err);
-    }
 });
 
+UserSchema.pre('save', async function () {
+    const salt = await bcrypt.genSalt(10);
+    console.log(salt);
+    
+
+
+    if (this.password) {
+        this.password = await bcrypt.hash(this.password, salt);
+    }
+});
 const User = mongoose.model("User", UserSchema);
 export default User;
