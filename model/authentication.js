@@ -8,6 +8,11 @@ const UserSchema = new Schema({
         type: String,
         required: [true, 'Please enter a first name'],
     },
+
+    isAdmin: {
+        type: Boolean,
+        default:false
+    },
     lastName: {
         type: String,
     },
