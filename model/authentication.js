@@ -13,6 +13,10 @@ const UserSchema = new Schema({
         type: Boolean,
         default:false
     },
+    profilePicture: {
+        type: String,
+        required: [false, "Please enter a product image link"],
+      },
     lastName: {
         type: String,
     },
